@@ -86,7 +86,7 @@ class DefaultRequest {
        }
    }
 
-    Future<Response> postObject(Map<String, dynamic> json, String node) async{
+    Future<Response> postObject(String json, String node) async{
       var response;
         if(isConnected){
             response = await http.post(

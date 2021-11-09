@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ggpmobile/models/ordem_pedido.dart';
 import 'package:ggpmobile/models/product.dart';
 
@@ -14,6 +16,16 @@ class OrderProduct {
   });
 
 
+  String toJson(OrderProduct orderProduct) {
+    String json = jsonEncode(
+        {
+          "id": orderProduct.id,
+          "pedido": orderProduct.pedido,
+          "product": orderProduct.product
+        }
+    );
+    return json;
+  }
 
 
 }

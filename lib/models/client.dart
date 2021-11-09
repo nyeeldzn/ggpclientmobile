@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ggpmobile/models/bairro.dart';
 
 class Client {
@@ -15,6 +17,30 @@ class Client {
     required this.tel,
     required this.data_cadastro
   });
+
+  factory Client.fromJson(Map<String, dynamic> json){
+    return Client(
+        id: json['id'],
+        name: json['nome'],
+        bairro: json['bairro'],
+        tel: json['tel'],
+        data_cadastro: json['data_cadastro']
+    );
+  }
+
+  String toJson(Client client) {
+    String json = jsonEncode(
+        {
+          "id": client.id,
+          "nome": client.name,
+          "bairro": client.bairro,
+          "tel": client.tel,
+          "data_cadastro": client.data_cadastro,
+        }
+    );
+    return json;
+  }
+
 
   @override
   String toString() {

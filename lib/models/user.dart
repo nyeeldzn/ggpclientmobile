@@ -24,16 +24,6 @@ class User {
   }
 
   String toJson(User user){
-
-
-    /*
-    Map<String, dynamic> map = {
-      'id' : user.id.toString(),
-      'username' : user.username,
-      'pass' : user.pass,
-      'priv' : user.priv
-    };
-     */
    String json = jsonEncode(
         {
           "id": user.id.toString(),

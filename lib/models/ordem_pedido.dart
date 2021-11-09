@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:ggpmobile/models/client.dart';
 import 'package:ggpmobile/models/user.dart';
 
@@ -19,22 +21,68 @@ class OrdemPedido {
   final int status;
   final List order_products;
 
-  OrdemPedido(
-      this.id,
-      this.client,
-      this.employe,
-      this.entregador,
-      this.paymment_method,
-      this.created_date,
-      this.created_hour,
-      this.start_hour,
-      this.checkout_hour,
-      this.sended_hour,
-      this.end_hour,
-      this.font,
-      this.checkUser,
-      this.status,
-      this.order_products);
+  OrdemPedido({
+    required this.id,
+    required this.client,
+    required this.employe,
+    required this.entregador,
+    required this.paymment_method,
+    required this.created_date,
+    required this.created_hour,
+    required this.start_hour,
+    required this.checkout_hour,
+    required this.sended_hour,
+    required this.end_hour,
+    required this.font,
+    required this.checkUser,
+    required this.status,
+    required this.order_products
+});
+
+  factory OrdemPedido.fromJson(Map<String, dynamic> json){
+    return OrdemPedido(
+        id: json['id'],
+        client: json['cliente'],
+        employe: json['operador'],
+        entregador: json['entregador'],
+        paymment_method: json['forma_pagamento'],
+        created_date: json['entradaDate'],
+        created_hour: json['entradaHora'],
+        start_hour: json['triagemHora'],
+        checkout_hour: json['checkoutHora'],
+        sended_hour: json['enviadoHora'],
+        end_hour: json['finalizadoHora'],
+        font: json['fonte_pedido'],
+        checkUser: json['caixa_responsavel'],
+        status: json['status'],
+        order_products: json['orderProducts'],
+    );
+  }
+
+  String toJson(OrdemPedido product) {
+    String json = jsonEncode(
+        {
+          'id': product.id,
+          'cliente': product.client,
+          'operador': product.employe,
+          'entregador': product.entregador,
+          'forma_pagamento': product.paymment_method,
+          'entradaDate': product.created_date,
+          'entradaHora': product.created_hour,
+          'triagemHora': product.start_hour,
+          'checkoutHora': product.checkout_hour,
+          'enviadoHora': product.sended_hour,
+          'finalizadoHora': product.end_hour,
+          'fonte_pedido': product.font,
+          'caixa_responsavel': product.checkUser,
+          'status': product.status,
+          'orderProducts': product.order_products,
+        }
+    );
+    return json;
+  }
+
+
 
   @override
   String toString() {
