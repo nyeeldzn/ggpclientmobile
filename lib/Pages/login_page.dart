@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ggpmobile/helpers/HTTPRequest/login_request.dart';
 import 'package:ggpmobile/models/user.dart';
 import 'package:http/http.dart' as http;
+import 'package:ggpmobile/helpers/HTTPRequest/default_request.dart';
 
 
 class LoginPage extends StatefulWidget{
@@ -12,12 +14,36 @@ class LoginPage extends StatefulWidget{
   @override
   _LoginPageState createState() => _LoginPageState();
 
+
 }
 
+
+
 class _LoginPageState extends State<LoginPage>{
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-      String _usuario = "";
-      String _pass = "";
+      final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+          String _username = "";
+          String _pass = "";
+
+
+  @override
+  void initState() {
+    Future<bool> state = testConnection();
+    state.then((value) => {
+    if(value){
+        print("Conexao feita com sucesso")
+    } else {
+    print("Problema ao realizar conexao")
+    }
+
+    });
+
+    super.initState();
+  }
+
+  Future<bool> testConnection() async {
+    bool state = await DefaultRequest().setConn("http://192.168.0.101", "8081", "");
+    return state;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +128,7 @@ class _LoginPageState extends State<LoginPage>{
                             child: TextField(
                               onChanged: (val){
                                 setState(() {
-                                  _usuario = val.trim();
+                                  _username = val.trim().toUpperCase();
                                 });
                               },
                               keyboardType: TextInputType.name,
@@ -150,7 +176,7 @@ class _LoginPageState extends State<LoginPage>{
           child: TextField(
             onChanged: (val){
               setState(() {
-                _pass = val.trim();
+                _pass = val.trim().toUpperCase();
               });
             },
             obscureText: true,
@@ -183,7 +209,7 @@ class _LoginPageState extends State<LoginPage>{
       child: RaisedButton(
         elevation: 5,
         onPressed: () {
-          iniciarLogin(_usuario, _pass);
+          iniciarLogin(_username, _pass);
         },
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
@@ -203,77 +229,21 @@ class _LoginPageState extends State<LoginPage>{
     );
   }
 
-  void iniciarLogin(String usuario, String pass) {
+  void iniciarLogin(String usuario, String pass) async {
     print("Iniciando Login");
-    String stringConcCredential = _usuario.trim().toUpperCase() + ":" + _pass.trim().toUpperCase();
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String encodedCredentials = stringToBase64.encode(stringConcCredential);
-    print("Encoded Credentials: " + encodedCredentials);
 
-    fetchUser(encodedCredentials);
-    //print(fetchUser(encodedCredentials));
-  }
-
-  /*
-  Future<List<User>?> findUsers(String credentials) async {
-    print("Realizando HttpRequest");
-   // final response = await http.get(
-   //   Uri.parse("http://192.168.0.101:8081/usuarios"),
-   //   headers: requestHeaders,
-   // );
-
-
-
-    final responseJson = jsonDecode(fetchAlbum(credentials).);
-
-
-    return fromJsonList(responseJson);
-  }
-   */
-
-  /*
-
-  Future<http.Response> fetchAlbum(String credentials) {
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Basic' + credentials
-    };
-    
-    return http.get(Uri.parse('https://192.168.0.101:8081/usuarios'), headers: requestHeaders);
-  }
-
-  Future<User> fetchUser(String encodedCredentials) async {
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Basic' + encodedCredentials,
-    };
-    final response = await http
-        .get(Uri.parse('http://192.168.0.101:8081/clientes/1'), headers: requestHeaders);
-
-
-  }
-
-
-   */
-
-  Future fetchUser(String encodedCredentials) async {
-    Map<String, String> requestHeaders = {
-      'Content-type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Basic ' + encodedCredentials,
-    };
-    var url = 'http://192.168.0.101:8081/clientes';
-    var response = await http.get(Uri.parse(url), headers: requestHeaders);
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      print(response.body);
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
+    User usr = User(id: 0, username: _username, pass: _pass, priv: "");
+    int state = await LoginRequest().login(usr);
+    switch (state) {
+      case 0:
+        print("Problema de Conexao");
+        break;
+      case 1:
+        print("Usuario Logado com Sucesso");
+        break;
+      case 2:
+        print("Usuario e/ou Senha Recusados");
+        break;
     }
   }
 
@@ -281,6 +251,7 @@ class _LoginPageState extends State<LoginPage>{
     return User(
         id: json['id'],
         username: json['username'],
+        pass: json['pass'],
         priv: json['priv']
     );
   }
