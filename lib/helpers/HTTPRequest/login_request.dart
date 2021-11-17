@@ -24,12 +24,13 @@ class LoginRequest{
     var response = await http.post(
         Uri.parse(url),
         headers: requestHeaders,
-        body: user.toJson(user)
+        body: User.toJson(user)
     );
     switch (response.statusCode){
         case 200:
           print(response.body);
           currentUser = await User.fromJson(jsonDecode(response.body));
+          DefaultRequest.authHeaders = requestHeaders;
           return 1;
         case 401:
           print("Usuario Nao Autorizado");

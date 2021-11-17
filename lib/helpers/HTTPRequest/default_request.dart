@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -35,6 +37,7 @@ class DefaultRequest {
   }
 
     Future<bool> setConn(String url, String port, String encodedCredentials) async{
+     String localEncodedCredentials = encodedCredentials;
     print("Test Connection" + "\n URL: " + url + "\n Port: " + port + "\n Crendentials: " + encodedCredentials);
     bool state = await testConn(url, port, encodedCredentials);
     if(state){
@@ -43,8 +46,9 @@ class DefaultRequest {
       authHeaders = {
         'Content-type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Basic ' + encodedCredentials,
+        'Authorization': 'Basic ' + localEncodedCredentials,
       };
+      print(authHeaders);
       isConnected = true;
       return true;
     }else{
@@ -69,7 +73,8 @@ class DefaultRequest {
     Future<Response> getObjectWithId(String node, int id) async {
       var response;
       if(isConnected){
-          response = await http.get(Uri.parse(host + node + "/$id"));
+          response = await http.get(Uri.parse(host + node + "/$id"), headers: authHeaders);
+          print(authHeaders);
         return response;
       }else{
         return response;
@@ -79,7 +84,7 @@ class DefaultRequest {
     Future<Response> getObjectWithText(String restNode) async {
        var response;
        if(isConnected){
-          response = await http.get(Uri.parse(host + restNode));
+          response = await http.get(Uri.parse(host + restNode), headers: authHeaders);
          return response;
        }else{
          return response;
@@ -98,5 +103,31 @@ class DefaultRequest {
         }
           return response;
       }
+
+    Future<Response> updateObject(String json, String node, int id) async {
+      var response;
+        if(isConnected){
+          response = await http.put(
+            Uri.parse(host + node + "/" + id.toString()),
+            headers: authHeaders,
+            body: json
+          );
+          return response;
+        }
+          return response;
+    }
+
+    Future<Response> deleteObject(String node, int id) async {
+      var response;
+        if(isConnected){
+          response = await http.delete(
+            Uri.parse(host + node + "/" + id.toString()),
+            headers: authHeaders,
+            body: json
+          );
+          return response;
+        }
+          return response;
+    }
 
 }

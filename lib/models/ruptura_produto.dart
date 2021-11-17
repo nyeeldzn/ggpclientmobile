@@ -9,7 +9,18 @@ class RupturaProduto {
   final ListaRuptura lista_ruptura;
   final Product product;
 
-  RupturaProduto(this.id, this.lista_ruptura, this.product);
+  RupturaProduto({
+    required this.id,
+    required this.lista_ruptura,
+    required this.product});
+
+  factory RupturaProduto.fromJson(Map<String, dynamic> json){
+    return RupturaProduto(
+        id: json['id'],
+        lista_ruptura: json['lista_ruptura'],
+        product: json['produto']
+    );
+  }
 
   String toJson(RupturaProduto rupturaProduto) {
     String json = jsonEncode(

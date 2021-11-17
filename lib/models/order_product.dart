@@ -15,6 +15,14 @@ class OrderProduct {
     required this.product
   });
 
+  factory OrderProduct.fromJson(Map<String, dynamic> json){
+    return OrderProduct(
+        id: json['id'],
+        pedido: json['pedido'],
+        product: json['produto']
+    );
+  }
+
 
   String toJson(OrderProduct orderProduct) {
     String json = jsonEncode(

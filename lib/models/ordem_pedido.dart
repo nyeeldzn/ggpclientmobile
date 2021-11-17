@@ -42,8 +42,8 @@ class OrdemPedido {
   factory OrdemPedido.fromJson(Map<String, dynamic> json){
     return OrdemPedido(
         id: json['id'],
-        client: json['cliente'],
-        employe: json['operador'],
+        client: Client.fromJson(json['cliente']),
+        employe: User.fromJson(json['operador']),
         entregador: json['entregador'],
         paymment_method: json['forma_pagamento'],
         created_date: json['entradaDate'],

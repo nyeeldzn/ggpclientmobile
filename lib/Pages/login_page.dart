@@ -3,8 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ggpmobile/Pages/home_page.dart';
 import 'package:ggpmobile/helpers/HTTPRequest/login_request.dart';
+import 'package:ggpmobile/models/product.dart';
 import 'package:ggpmobile/models/user.dart';
+import 'package:ggpmobile/services/product_service.dart';
+import 'package:ggpmobile/services/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:ggpmobile/helpers/HTTPRequest/default_request.dart';
 
@@ -23,7 +27,7 @@ class _LoginPageState extends State<LoginPage>{
       final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
           String _username = "";
           String _pass = "";
-
+          late BuildContext LoginPageContext;
 
   @override
   void initState() {
@@ -37,6 +41,8 @@ class _LoginPageState extends State<LoginPage>{
 
     });
 
+
+
     super.initState();
   }
 
@@ -45,8 +51,10 @@ class _LoginPageState extends State<LoginPage>{
     return state;
   }
 
+
   @override
   Widget build(BuildContext context) {
+    LoginPageContext = context;
     return WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
@@ -203,13 +211,14 @@ class _LoginPageState extends State<LoginPage>{
     );
   }
   Container buildLoginButton() {
+    int i = 0;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 40.0),
       width: double.infinity,
       child: RaisedButton(
         elevation: 5,
         onPressed: () {
-          iniciarLogin(_username, _pass);
+            iniciarLogin(_username, _pass);
         },
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
@@ -240,6 +249,7 @@ class _LoginPageState extends State<LoginPage>{
         break;
       case 1:
         print("Usuario Logado com Sucesso");
+        navigateToHomePage(LoginPageContext);
         break;
       case 2:
         print("Usuario e/ou Senha Recusados");
@@ -247,20 +257,63 @@ class _LoginPageState extends State<LoginPage>{
     }
   }
 
-  User fromJson(Map<String, dynamic> json){
-    return User(
-        id: json['id'],
-        username: json['username'],
-        pass: json['pass'],
-        priv: json['priv']
+  void navigateToHomePage(BuildContext context){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 
-  List<User> fromJsonList(String response){
-    print("Convertendo JsonList");
-    return json.decode(response)['results']
-        .map((data) => fromJson(data))
-        .toList();
+  Future<List<Product>> testGetAll(){
+      print("Getting all");
+    return ProductService().getAll();
+  }
+  Future<Product> testGetByName(Product productTest){
+      print("Getting test by name");
+    return ProductService().getByProductname(productTest.name);
+  }
+  Future<Product> testPost (Product product){
+      print("Posting user teste");
+      Future<Product> postProduct = ProductService().postProduct(product);
+    return postProduct;
+  }
+  Future<Product> testPut (Product product) {
+      print("Updating User teste");
+      Future<Product> putProduct = ProductService().updateProduct(product);
+    return putProduct;
+  }
+  Future<bool> testDelete (Product product) {
+      print("deleting user teste");
+      Future<bool> deleteProduct = ProductService().deleteProduct(product.id);
+    return deleteProduct;
+  }
+  void iniciarTestesCrud(){
+    Product prodToTest = Product(id: 3990022, name: "PRODUTO DE TESTE");
+    Product prodToTest2 = Product(id: 87882910, name: "PRODUTO DE TEST");
+
+    print("Iniciando Teste de Service");
+    testGetAll().then((value) => {
+        print(value),
+        print("Iniciando Teste de Post"),
+          testPost(prodToTest).then((value) => {
+            print(value),
+            print("Iniciando Teste de GetID"),
+              testGetByName(prodToTest).then((value) => {
+                print(value),
+                prodToTest2 = value,
+                print("Iniciando Teste de Put"),
+                  testPut(prodToTest2).then((value) => {
+                    print(value),
+                    print("Iniciando Teste de Delete"),
+                      testDelete(prodToTest2).then((value) => {
+                        print(value),
+                        print("Testes finalizados"),
+                      })
+                  })
+              })
+          })
+
+    });
   }
 
 }

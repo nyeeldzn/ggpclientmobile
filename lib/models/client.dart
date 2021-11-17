@@ -6,6 +6,7 @@ class Client {
 
   final int id;
   final String name;
+  final String endereco;
   final Bairro bairro;
   final String tel;
   final String data_cadastro;
@@ -13,6 +14,7 @@ class Client {
   Client({
     required this.id,
     required this.name,
+    required this.endereco,
     required this.bairro,
     required this.tel,
     required this.data_cadastro
@@ -22,13 +24,14 @@ class Client {
     return Client(
         id: json['id'],
         name: json['nome'],
-        bairro: json['bairro'],
-        tel: json['tel'],
+        endereco: json['endereco'],
+        bairro: Bairro.fromJson(json['bairro']),
+        tel: json['telefone'],
         data_cadastro: json['data_cadastro']
     );
   }
 
-  String toJson(Client client) {
+  static String toJson(Client client) {
     String json = jsonEncode(
         {
           "id": client.id,

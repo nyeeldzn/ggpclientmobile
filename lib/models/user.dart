@@ -23,7 +23,7 @@ class User {
     );
   }
 
-  String toJson(User user){
+  static String toJson(User user){
    String json = jsonEncode(
         {
           "id": user.id.toString(),

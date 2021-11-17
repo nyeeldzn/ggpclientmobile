@@ -17,7 +17,7 @@ class Product {
     );
   }
 
-  String toJson(Product product) {
+  static String toJson(Product product) {
     String json = jsonEncode(
         {
           "id": product.id,

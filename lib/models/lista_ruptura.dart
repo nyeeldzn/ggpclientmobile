@@ -7,9 +7,20 @@ class ListaRuptura {
   final String date;
   List product_list = [];
 
-  ListaRuptura(this.id, this.desc, this.date);
+  ListaRuptura({required this.id, required this.desc, required this.date, required this.product_list});
 
-  String toJson(ListaRuptura listaRuptura) {
+  factory ListaRuptura.fromJson(Map<String, dynamic> json){
+    return ListaRuptura(
+        id: json['id'],
+        desc: json['nome'],
+        date: json['bairro'],
+        product_list: json['tel']
+    );
+  }
+
+
+
+  static String toJson(ListaRuptura listaRuptura) {
     String json = jsonEncode(
         {
           "id": listaRuptura,
